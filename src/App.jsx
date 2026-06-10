@@ -2,12 +2,13 @@ import SearchBar from "./components/SearchBar";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
 import { useEffect, useState } from "react";
-import ForecastCard from "./components/ForecastCard";
+import ForecastList from "./components/ForecastList";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 function App() {
   const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState([]);
 
   useEffect(() => {
     async function fetchWeather() {
@@ -19,6 +20,7 @@ function App() {
 
         if (data.results) {
           setWeather(data.results);
+          setForecast(data.results.forecast.slice(1, 4)); // Por limitação da versão gratuita da API, está exibindo apenas o card do próximo dia 
         }
       } catch (erro) {
         console.error("Erro na busca pela API:", erro);
@@ -31,15 +33,14 @@ function App() {
   return (
     <div className="app-container">
       <SearchBar />
-      
+
       {weather && (
         <>
           <h1>{weather.city}</h1>
           <WeatherCard weather={weather} />
-          <ForecastCard weather={weather} />
+          <ForecastList forecasts={forecast} />
         </>
       )}
-
     </div>
   );
 }
