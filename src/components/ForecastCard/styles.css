@@ -1,0 +1,35 @@
+.forecast-container {
+    display: flex;
+    gap: 8px;
+}
+
+.forecast-card {
+    background-color: #FFFFFF15;
+    border-radius: 16px;
+    width: 100px;
+    padding: 16px;
+}
+
+.forecast-day {
+    text-align: center;
+}
+
+.forecast-weekday {
+    font-weight: 500;
+}
+
+.forecast-date {
+    font-size: 13px;
+}
+
+.forecast-condition {
+    width: 32px;
+    margin: 16px auto 16px;
+    display: block;
+}
+
+.forecast-minmax {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}

@@ -2,6 +2,7 @@ import SearchBar from "./components/SearchBar";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
 import { useEffect, useState } from "react";
+import ForecastCard from "./components/ForecastCard";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -12,7 +13,7 @@ function App() {
     async function fetchWeather() {
       try {
         const response = await fetch(
-          `https://api.hgbrasil.com/weather?format=json-cors&key=${API_KEY}&git city_name=Imperatriz, MA`,
+          `https://api.hgbrasil.com/weather?format=json-cors&key=${API_KEY}&city_name=Imperatriz, MA`,
         );
         const data = await response.json();
 
@@ -35,6 +36,7 @@ function App() {
         <>
           <h1>{weather.city}</h1>
           <WeatherCard weather={weather} />
+          <ForecastCard weather={weather} />
         </>
       )}
 
