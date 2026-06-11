@@ -1,16 +1,27 @@
+import { useState } from "react";
 import "./styles.css";
 
-const SearchBar = ({ searchCity }) => {  
+const SearchBar = ({ onSearch }) => {
 
-  const onSubmit = (event) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    searchCity(event.target[0].value);
+    const trimmedValue = inputValue.trim();
+    if(trimmedValue !== "") {
+      onSearch(trimmedValue);
+    }
   }
 
   return (
-    <form className="form-search" onSubmit={onSubmit}>
+    <form className="form-search" onSubmit={handleSubmit}>
       <label className="search-bar">
-        <input type="text" placeholder="Digite a cidade" />
+        <input 
+          type="text" 
+          placeholder="Digite a cidade" 
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
         <button type="submit">
           <img src="./search.svg" alt="ícone de busca" />
         </button>

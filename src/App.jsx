@@ -45,7 +45,7 @@ function App() {
     <div className="app-container">
       <SearchBar 
         city={city} 
-        searchCity={(city) => {
+        onSearch={(city) => {
           newCity(city);
         }}
       />
