@@ -15,48 +15,100 @@ function App() {
 
   const newCity = (city) => {
     setCity(city);
-  }
-  
+  };
+
+  const getLocation = () => {
+    if ("geolocation" in navigator) {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition((position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => reject(error)
+      );
+      });
+    } else {
+      return Promise.reject(
+        new Error("Geolocalização não suportada pelo navegador"),
+      );
+    }
+  };
+
   useEffect(() => {
+    if (!city) return; // não faz nada se city ainda não foi definido
     async function fetchWeather() {
       setLoading(true);
       try {
         const response = await fetch(
           `https://api.hgbrasil.com/weather?format=json-cors&key=${API_KEY}&city_name=${city}`,
         );
+
         const data = await response.json();
 
         if (data.results) {
           setWeather(data.results);
-          setForecast(data.results.forecast.slice(1, 4)); // Por limitação da versão gratuita da API, está exibindo apenas o card do próximo dia 
+          setForecast(data.results.forecast.slice(1, 4)); // Por limitação da versão gratuita da API, está exibindo apenas o card do próximo dia
         }
-      } catch (erro) {
-        console.error("Erro na busca pela API:", erro);
-        setLoading(false)
+      } catch (error) {
+        console.error("Erro na busca pela API:", error);
+        setLoading(false);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
     fetchWeather();
   }, [city]);
 
+  useEffect(() => {
+    async function fetchByCoordinates() {
+      setLoading(true);
+      try {
+        const coords = await getLocation();
+        const response = await fetch(
+          `https://api.hgbrasil.com/weather?format=json-cors&key=${API_KEY}&lat=${coords.latitude}&lon=${coords.longitude}`,
+        );
+
+        const data = await response.json();
+
+        if (data.results) {
+          setWeather(data.results);
+          setForecast(data.results.forecast.slice(1, 4)); // Por limitação da versão gratuita da API, está exibindo apenas o card do próximo dia
+        }
+      } catch (error) {
+        console.error("Erro na busca pela API:", error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchByCoordinates();
+  }, []);
+
   return (
     <div className="app-container">
-      <SearchBar 
-        city={city} 
+      <SearchBar
+        city={city}
         onSearch={(city) => {
           newCity(city);
         }}
       />
       {loading ? (
         <Loading />
-      ) : weather && (
-        <>
-          <h1>{weather.city}</h1>
-          <WeatherCard weather={weather} />
-          <ForecastList forecasts={forecast} />
-        </>
+      ) : (
+        weather && (
+          <>
+            <div>
+              <h1>{weather.city}</h1>
+              <p>{`Nascer do Sol: ${weather.sunrise} | Pôr do Sol: ${weather.sunset}`}</p>
+            </div>
+            <WeatherCard weather={weather} />
+            <ForecastList forecasts={forecast} />
+          </>
+        )
       )}
     </div>
   );
